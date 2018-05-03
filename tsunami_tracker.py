@@ -39,6 +39,7 @@ import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'build'))
 
 import psmove
+import pygame
 
 if psmove.count_connected() < 1:
     print('No controller connected')
@@ -49,6 +50,9 @@ move = psmove.PSMove()
 
 # Mirror the camera image
 tracker.set_mirror(True)
+
+pygame.init()
+display = pygame.display.set_mode((640, 480))
 
 # Calibrate the controller with the tracker
 result = -1
@@ -74,6 +78,13 @@ async def serve(websocket, path):
         # Update all tracked controllers
         tracker.update()
         status = tracker.get_status(move)
+
+        # tracker.annotate()
+        # image = tracker.get_image()
+        # pixels = psmove.cdata(image.data, image.size).encode("utf-8", errors="surrogateescape")
+        # surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
+        # display.blit(surface, (0, 0))
+        # pygame.display.flip()
         
         if move.get_trigger() > 10 and not MOVING:
             if status == psmove.Tracker_TRACKING:
