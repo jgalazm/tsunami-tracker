@@ -5,10 +5,14 @@ let camera = viewer.camera;
 let rotateToDirection = (directionVector) => {
     let minDifference = 30;
     let rotationSpeed = -0.5;
-    let magnitude = Math.sign(directionVector[0])*Math.floor(Math.abs(directionVector[0]/15));
-    let lonRotation = rotationSpeed*magnitude;
+    let longMagnitude = Math.sign(directionVector[0])*Math.floor(Math.abs(directionVector[0]/15));
+    let latMagnitude = Math.sign(directionVector[1])*Math.floor(Math.abs(directionVector[1]/15));
+    let longRotation = rotationSpeed*longMagnitude;
+    let latRotation = rotationSpeed*latMagnitude;
     if( Math.abs(directionVector[0]) > minDifference)
-        camera.rotateRight(Cesium.Math.toRadians(lonRotation)) 
+        camera.rotateRight(Cesium.Math.toRadians(longRotation)) 
+    if( Math.abs(directionVector[1]) > minDifference)
+        camera.rotateUp(Cesium.Math.toRadians(latRotation)) 
 }
 
 var ws = new WebSocket("ws://192.168.5.9:8765/");
