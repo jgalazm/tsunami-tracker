@@ -64,6 +64,7 @@ auto_update_leds = tracker.get_auto_update_leds(move)
 print('Auto-update LEDs is', ('enabled' if auto_update_leds else 'disabled'))
 
 # Loop and update the controller
+REF_POINTS = [[0,0], [0,0], [0,0]]
 
 async def serve(websocket, path):
     print('New client')
@@ -79,20 +80,21 @@ async def serve(websocket, path):
         tracker.update()
         status = tracker.get_status(move)
 
-        # tracker.annotate()
-        # image = tracker.get_image()
-        # pixels = psmove.cdata(image.data, image.size).encode("utf-8", errors="surrogateescape")
-        # surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
-        # display.blit(surface, (0, 0))
-        # pygame.display.flip()
+        tracker.annotate()
+        image = tracker.get_image()
+        pixels = psmove.cdata(image.data, image.size).encode("utf-8", errors="surrogateescape")
+        surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
+        display.blit(surface, (0, 0))
+        pygame.display.flip()
         
         if move.get_trigger() > 10 and not MOVING:
             if status == psmove.Tracker_TRACKING:
                 x, y, radius = tracker.get_position(move)
+                transformedPoint = pool_transform([x,y])
                 event = {
                     'event': 'START_MOVING',
-                    'x': x,
-                    'y': y,
+                    'x': transformedPoint[0],
+                    'y': transformedPoint[1],
                     'radius': radius,
                 }
                 await websocket.send(json.dumps(event))
@@ -103,10 +105,11 @@ async def serve(websocket, path):
         if move.get_trigger() <= 10 and MOVING:
             if status == psmove.Tracker_TRACKING:
                 x, y, radius = tracker.get_position(move)
+                transformedPoint = pool_transform([x,y])
                 event = {
                     'event': 'STOP_MOVING',
-                    'x': x,
-                    'y': y,
+                    'x': transformedPoint[0],
+                    'y': transformedPoint[1],
                     'radius': radius,
                 }
                 MOVING = False
@@ -118,14 +121,15 @@ async def serve(websocket, path):
         
         if status == psmove.Tracker_TRACKING and move.get_trigger() > 10:
             x, y, radius = tracker.get_position(move)
+            transformedPoint = pool_transform([x,y])
             event = {
                 'event': 'MOVE',
-                'x': x,
-                'y': y,
+                'x': transformedPoint[0],
+                'y': transformedPoint[1],
                 'radius': radius,
             }
             print('Position: ({}, {}), Radius: {}, Trigger: {}'.format(
-                    x, y, radius, move.get_trigger()))
+                    transformedPoint[0], transformedPoint[1], radius, move.get_trigger()))
             await websocket.send(json.dumps(event))
         elif status == psmove.Tracker_CALIBRATED:
             print('Not currently tracking.')
@@ -134,7 +138,67 @@ async def serve(websocket, path):
         elif status == psmove.Tracker_NOT_CALIBRATED:
             print('Controller not calibrated.')
 
+def start_calibration():
+    CALIBRATING = True
+    START_RELEASED = False
+    i = 0
+    while i < len(REF_POINTS):
+        time.sleep(0.1)
+        # Get the latest input report from the controller
+        while move.poll():
+            pressed, released = move.get_button_events()
+            if released & psmove.Btn_START:
+                START_RELEASED = True
+                print("START_RELEASED")
+            if pressed & psmove.Btn_START:
+                print("START_pressed")
+            if pressed & psmove.Btn_TRIANGLE:
+                print("Btn_TRIANGLE_pressed")
 
+        # Grab the latest image from the camera
+        tracker.update_image()
+        # Update all tracked controllers
+        tracker.update()
+        status = tracker.get_status(move)
+
+        tracker.annotate()
+        image = tracker.get_image()
+        pixels = psmove.cdata(image.data, image.size).encode("utf-8", errors="surrogateescape")
+        surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
+        display.blit(surface, (0, 0))
+        pygame.display.flip()
+        
+        if START_RELEASED:
+            print("START RERLELALSADSED")
+            if status == psmove.Tracker_TRACKING:
+                x, y, radius = tracker.get_position(move)
+                REF_POINTS[i] = [x,y]
+                print('Point ' + str(i) + ' : ' + str([x,y]))
+                i += 1
+                START_RELEASED = False
+                continue
+                
+        # Check the tracking status
+        
+        if status == psmove.Tracker_CALIBRATED:
+            print('Not currently tracking.')
+        elif status == psmove.Tracker_CALIBRATION_ERROR:
+            print('Calibration error.')
+        elif status == psmove.Tracker_NOT_CALIBRATED:
+            print('Controller not calibrated.')
+    print("FINISHED CALIBRATION")
+    print("Result: " + str(REF_POINTS))
+
+def pool_transform(point):
+    X0 = (REF_POINTS[0][0]+REF_POINTS[2][0])/2
+    Y0 = (REF_POINTS[0][1]+REF_POINTS[2][1])/2
+    x = point[0]-X0
+    y = point[1]-Y0
+    a = abs(REF_POINTS[2][0] - X0)
+    b = abs(REF_POINTS[1][0] - Y0)
+    return [x/a, y/b]
+
+start_calibration()
 start_server = websockets.serve(serve, '0.0.0.0', 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
