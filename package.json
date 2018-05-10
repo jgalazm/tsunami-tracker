@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cesium": "^1.44.0"
+    "cesium": "^1.44.0",
+    "cesium-tsunamilab": "^1.0.5"
   }
 }
