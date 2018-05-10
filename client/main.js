@@ -96,6 +96,19 @@ let thismodel;
 rotation functions
 */
 
+let unitCircleToWindowCoordinates = (xy) =>{
+    let x2 = xy[0]*window.innerHeight + window.innerHeight/2;
+    let y2 = xy[1]*window.innerHeight + window.innerHeight/2;
+    return [x2,y2];
+}
+
+let windowToUnitCircleCoordinates = (xy) => {
+    let radiusInPixels = window.innerHeight/2;
+    let x2 = (xy[0]-radiusInPixels)/window.innerHeight;
+    let y2 = (xy[1]-radiusInPixels)/window.innerHeight;
+    return [x2,y2];
+}
+
 let rotateFromDifference = (difference)=>{
     difference  = Cesium.Ellipsoid.WGS84.cartesianToCartographic(difference);    
     camera.rotateRight(-Cesium.Math.toRadians(difference.longitude)*4) 
@@ -119,6 +132,8 @@ let rotateBetweenPoints = (startPixelCoordinates, endPixelCoordinates) => {
     }
 }
 
+
+
 let rotateUnitSphere = (start, end) =>{
     /* 
         rotates the cesium globe as if it was a unit sphere using 
@@ -126,8 +141,8 @@ let rotateUnitSphere = (start, end) =>{
         end: same thing    
     */
 
-    let startPixelCoordinates = start*window.innerHeight + window.innerHeight/2;
-    let endPixelCoordinates = end*window.innerWidth + window.innerWidth/2;
+    let startPixelCoordinates = unitCircleToWindowCoordinates(start);
+    let endPixelCoordinates = unitCircleToWindowCoordinates(end);
     rotateBetweenPoints(startPixelCoordinates, endPixelCoordinates);
 }
 
@@ -162,13 +177,29 @@ let loadEarthquakeControl = ()=>{
     ctx.fill();
 }
 
+let startEarthquakeFromUnitCircleCoordinates = (xycircle)=>{
+
+    let xypixel = unitCircleToWindowCoordinates(xycircle);
+
+    let viewer = tsunamiView.viewer;
+    var mousePosition = new Cesium.Cartesian2(xypixel[0],xypixel[1]);
+
+    var ellipsoid = viewer.scene.globe.ellipsoid;
+    var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
+    if (cartesian) {
+        var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+        var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+        thismodel.model.newEarthquake = [Object.assign(data.earthquake[0],{ cn:  latitude,   ce:  longitude })];
+    }  
+}
 /* 
 mouse events
 */
 
 let mousedown = false;
 window.onmousemove = (e)=>{
-    if(pointerContainer){
+    if( pointerContainer ) {
         pointerContainer.style.top = `${e.clientY}px`;
         pointerContainer.style.left = `${e.clientX}px`;
     }
@@ -180,21 +211,16 @@ window.onmousemove = (e)=>{
     // if(!events['rotate'].started){
     //     events['rotate'].initialPoint = circlePoint;
     // }
-    // rotateUnitSphere(xcircle, ycircle);
+
+
+    // rotateUnitSphere( events['rotate'].initialPoint, circlePoint);
 };
 
 window.onmousedown = (e) =>{
-    let viewer = tsunamiView.viewer;
-    var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
-
-    var ellipsoid = viewer.scene.globe.ellipsoid;
-    var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
-    if (cartesian) {
-        var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-        var longitude = Cesium.Math.toDegrees(cartographic.longitude);
-        var latitude = Cesium.Math.toDegrees(cartographic.latitude);
-        thismodel.model.newEarthquake = [Object.assign(data.earthquake[0],{ cn:  latitude,   ce:  longitude })];
-    }      
+    if(e.button === 1){
+        let coords = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
+        startEarthquakeFromUnitCircleCoordinates(coords);
+    }
 };
 
 
