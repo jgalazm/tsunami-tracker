@@ -3,9 +3,9 @@ let videoLayer;
 var videoElement = document.getElementById('videoElement');
 let events = {
     'rotate':{
-        started: false,
+        pressed: false,
         initialPoint: [0,0]
-    }    
+    }
 };
 
 
@@ -111,24 +111,28 @@ let windowToUnitCircleCoordinates = (xy) => {
 
 let rotateFromDifference = (difference)=>{
     difference  = Cesium.Ellipsoid.WGS84.cartesianToCartographic(difference);    
-    camera.rotateRight(-Cesium.Math.toRadians(difference.longitude)*4) 
+    tsunamiView.viewer.camera.rotateRight(-Cesium.Math.toRadians(difference.longitude)*4) 
 }
 
 let rotateBetweenPoints = (startPixelCoordinates, endPixelCoordinates) => {
     let startPosition = new Cesium.Cartesian2(startPixelCoordinates[0],startPixelCoordinates[1])
     let endPosition = new Cesium.Cartesian2(endPixelCoordinates[0],endPixelCoordinates[1])
 
+    var viewer = tsunamiView.viewer;
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var start = viewer.camera.pickEllipsoid(startPosition, ellipsoid);
     var end = viewer.camera.pickEllipsoid(endPosition, ellipsoid);
 
     if(start != undefined && end != undefined){
-    
-        var scratch = new Cesium.Cartesian3();
-        var difference = Cesium.Cartesian3.subtract(start, end, scratch);
-    
-       
-        rotateFromDifference(difference);
+   
+        start = Cesium.Ellipsoid.WGS84.cartesianToCartographic(start);
+        end = Cesium.Ellipsoid.WGS84.cartesianToCartographic(end);
+
+        const latDifference  = end.latitude - start.latitude;
+        const lonDifference = end.longitude - start.longitude;
+        console.log(lonDifference);
+
+        tsunamiView.viewer.camera.rotateRight(-Cesium.Math.toRadians(lonDifference));
     }
 }
 
@@ -151,7 +155,6 @@ let rotateUnitSphere = (start, end) =>{
 earthquake pointer functions
 */
 
-let circlePoint = [];
 let pointerContainer;
 
 let loadEarthquakeControl = ()=>{
@@ -204,23 +207,38 @@ window.onmousemove = (e)=>{
         pointerContainer.style.left = `${e.clientX}px`;
     }
 
-    // let xcircle = (e.clientX - window.innerWidth/2)/window.innerWidth;
-    // let ycircle = (e.clientY - window.innerHeight/2)/window.innerHeight;
-    // circlePoint = [xcircle, ycircle];
-
-    // if(!events['rotate'].started){
-    //     events['rotate'].initialPoint = circlePoint;
-    // }
-
-
-    // rotateUnitSphere( events['rotate'].initialPoint, circlePoint);
+    let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
+    console.log(events.rotate.pressed, events.rotate.initialPoint, circlePoint);
+    if(events['rotate'].pressed && events['rotate'].initialPoint.length>0){
+        events['rotate'].initialPoint = circlePoint;
+        rotateUnitSphere( events['rotate'].initialPoint, circlePoint);
+    }
+    
+    
 };
 
 window.onmousedown = (e) =>{
-    if(e.button === 1){
-        let coords = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
+    if(e.button == 1){
+        let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
         startEarthquakeFromUnitCircleCoordinates(coords);
     }
+    else if(e.button === 0) {
+        
+        events['rotate'].pressed = true;
+        
+        if(events['rotate'].initialPoint.length == 0){
+            let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
+            events['rotate'].initialPoint = circlePoint;
+        }
+    }
+};
+
+window.onmouseup = (e) =>{
+    if(e.button == 0){
+        events['rotate'].pressed = false;
+        events['rotate'].initialPoint = [];
+    }
+    alert(events['rotate'].initialPoint);
 };
 
 
