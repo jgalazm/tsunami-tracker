@@ -1,4 +1,4 @@
- var viewer = new Cesium.Viewer('cesiumContainer');
+var viewer = new Cesium.Viewer('cesiumContainer');
 let camera = viewer.camera;
 
 
@@ -43,19 +43,13 @@ ws.onmessage = function(event){
 
     if(data.event=="START_MOVING"){
         startMovingPoint = [data.x, data.y]
-        previousPoint = [data.x, data.y];
-    }
-    else if(data.event=="MOVE"){
-        previousPoint = currentPoint.slice();
     }
     
     currentPoint = [data.x , data.y];
 
-    normalizedCurrentPoint = normalize(currentPoint, startMovingPoint);
-    normalizedPreviousPoint = normalize(previousPoint, startMovingPoint);
-
-    console.log(normalizedCurrentPoint, normalizedPreviousPoint);
-    rotateBetweenPoints(normalizedCurrentPoint, normalizedPreviousPoint);
+    directionVector = [startMovingPoint[0]-currentPoint[0],startMovingPoint[1]-currentPoint[1]]
+    console.log('Idderoijcetion vetctor', directionVector);
+    rotateToDirection(directionVector);
 };
 */
 
