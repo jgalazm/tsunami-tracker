@@ -69,11 +69,55 @@ REF_POINTS = [[0,0], [0,0], [0,0]]
 async def serve(websocket, path):
     print('New client')
     MOVING = False
+    TRIGGER_CHANGED = False
+    TRIANGLE_CHANGED = False
+    CIRCLE_CHANGED = False
+    CROSS_CHANGED = False
+    SQUARE_CHANGED = False
+
+    TRIGGER_PRESSED = False
+    TRIANGLE_PRESSED = False
+    CIRCLE_PRESSED = False
+    CROSS_PRESSED = False
+    SQUARE_PRESSED = False
     while True:
         time.sleep(0.1)
         # Get the latest input report from the controller
-        while move.poll(): pass
-
+        while move.poll():
+            pressed, released = move.get_button_events()
+            if move.get_trigger() > 10:
+                if not TRIGGER_PRESSED:
+                    TRIGGER_CHANGED = True
+                TRIGGER_PRESSED = True
+            else:
+                if TRIGGER_PRESSED:
+                    TRIGGER_CHANGED = True
+                TRIGGER_PRESSED = False
+            if pressed & psmove.Btn_TRIANGLE or released & psmove.Btn_TRIANGLE:
+                TRIANGLE_CHANGED = True
+                if pressed & psmove.Btn_TRIANGLE:
+                    TRIANGLE_PRESSED = True
+                if released & psmove.Btn_TRIANGLE:
+                    TRIANGLE_PRESSED = False
+            if pressed & psmove.Btn_CIRCLE or released & psmove.Btn_CIRCLE:
+                CIRCLE_CHANGED = True
+                if pressed & psmove.Btn_CIRCLE:
+                    CIRCLE_PRESSED = True
+                if released & psmove.Btn_CIRCLE:
+                    CIRCLE_PRESSED = False
+            if pressed & psmove.Btn_CROSS or released & psmove.Btn_CROSS:
+                CROSS_CHANGED = True
+                if pressed & psmove.Btn_CROSS:
+                    CROSS_PRESSED = True
+                if released & psmove.Btn_CROSS:
+                    CROSS_PRESSED = False
+            if pressed & psmove.Btn_SQUARE or released & psmove.Btn_SQUARE:
+                SQUARE_CHANGED = True
+                if pressed & psmove.Btn_SQUARE:
+                    SQUARE_PRESSED = True
+                if released & psmove.Btn_SQUARE:
+                    SQUARE_PRESSED = False
+            
         # Grab the latest image from the camera
         tracker.update_image()
         # Update all tracked controllers
@@ -86,40 +130,67 @@ async def serve(websocket, path):
         surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
         display.blit(surface, (0, 0))
         pygame.display.flip()
-        
-        if move.get_trigger() > 10 and not MOVING:
-            if status == psmove.Tracker_TRACKING:
-                x, y, radius = tracker.get_position(move)
-                transformedPoint = pool_transform([x,y])
-                event = {
-                    'event': 'START_MOVING',
-                    'x': transformedPoint[0],
-                    'y': transformedPoint[1],
-                    'radius': radius,
-                }
-                await websocket.send(json.dumps(event))
-                MOVING = True
-                print('Start moving: ' + json.dumps(event))
-                continue
 
-        if move.get_trigger() <= 10 and MOVING:
-            if status == psmove.Tracker_TRACKING:
-                x, y, radius = tracker.get_position(move)
-                transformedPoint = pool_transform([x,y])
-                event = {
-                    'event': 'STOP_MOVING',
-                    'x': transformedPoint[0],
-                    'y': transformedPoint[1],
-                    'radius': radius,
-                }
-                MOVING = False
-                print('Stopped moving')
+        # Check button presses
+        if status == psmove.Tracker_TRACKING:
+            x, y, radius = tracker.get_position(move)
+            transformedPoint = pool_transform([x,y])
+            event = {
+                'event': 'PRESS',
+                'button': 'TRIGGER',
+                'x': transformedPoint[0],
+                'y': transformedPoint[1],
+                'radius': radius,
+            }
+            if TRIGGER_CHANGED:
+                if TRIGGER_PRESSED:
+                    event['event'] = 'PRESS'
+                else:
+                    event['event'] = 'RELEASE'
+                event['button'] = 'TRIGGER'
+                print('Sent event ' + json.dumps(event))
                 await websocket.send(json.dumps(event))
-                continue
+                TRIGGER_CHANGED = False
+            if CIRCLE_CHANGED:
+                if CIRCLE_PRESSED:
+                    event['event'] = 'PRESS'
+                else:
+                    event['event'] = 'RELEASE'
+                event['button'] = 'CIRCLE'
+                print('Sent event ' + json.dumps(event))
+                await websocket.send(json.dumps(event))
+                CIRCLE_CHANGED = False
+            if SQUARE_CHANGED:
+                if SQUARE_PRESSED:
+                    event['event'] = 'PRESS'
+                else:
+                    event['event'] = 'RELEASE'
+                event['button'] = 'SQUARE'
+                print('Sent event ' + json.dumps(event))
+                await websocket.send(json.dumps(event))
+                SQUARE_CHANGED = False
+            if TRIANGLE_CHANGED:
+                if TRIANGLE_PRESSED:
+                    event['event'] = 'PRESS'
+                else:
+                    event['event'] = 'RELEASE'
+                event['button'] = 'TRIANGLE'
+                print('Sent event ' + json.dumps(event))
+                await websocket.send(json.dumps(event))
+                TRIANGLE_CHANGED = False
+            if CROSS_CHANGED:
+                if CROSS_PRESSED:
+                    event['event'] = 'PRESS'
+                else:
+                    event['event'] = 'RELEASE'
+                event['button'] = 'CROSS'
+                print('Sent event ' + json.dumps(event))
+                await websocket.send(json.dumps(event))
+                CROSS_CHANGED = False
+                    
 
-        # Check the tracking status
-        
-        if status == psmove.Tracker_TRACKING and move.get_trigger() > 10:
+        # Check the tracking status        
+        if status == psmove.Tracker_TRACKING:
             x, y, radius = tracker.get_position(move)
             transformedPoint = pool_transform([x,y])
             event = {
