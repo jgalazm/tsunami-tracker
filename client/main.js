@@ -276,8 +276,6 @@ window.onmouseup = (e) => {
     if (e.button == 0) {
         handleTriggerRelease();
     }
-    //alert(events['rotate'].initialPoint);
-
 };
 
 
