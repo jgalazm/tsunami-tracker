@@ -276,25 +276,14 @@ window.onmousedown = (e) => {
         handleTrianglePress(circlePoint);
     }
     else if (e.button === 0) {
-
-        events['rotate'].pressed = true;
-        circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
-
-        if (events['rotate'].initialPoint.length == 0) {
-            events['rotate'].initialPoint = circlePoint;
-        }
-
+        handleTriggerPress(circlePoint);        
     }
 };
 
 window.onmouseup = (e) => {
     if (e.button == 0) {
-        events['rotate'].pressed = false;
-        events['rotate'].initialPoint = [];
-        circlePoint = [];
+        handleTriggerRelease();
     }
-    //alert(events['rotate'].initialPoint);
-
 };
 
 
@@ -327,4 +316,16 @@ function handleMove(currentCirclePoint){
 function handleTrianglePress(currentCirclePoint){
     startEarthquakeFromUnitCircleCoordinates(circlePoint);
 
+}
+
+function handleTriggerPress(currentCirclePoint){
+    events['rotate'].pressed = true;
+    if (events['rotate'].initialPoint.length == 0) {
+        events['rotate'].initialPoint = circlePoint;
+    }
+}
+function handleTriggerRelease(currentCirclePoint){
+    events['rotate'].pressed = false;
+    events['rotate'].initialPoint = [];
+    circlePoint = [];
 }
