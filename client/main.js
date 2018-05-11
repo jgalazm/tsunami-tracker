@@ -324,6 +324,9 @@ window.onkeypress = (e)=>{
     if( e.key == 's'){
         handleCirclePress(circlePoint);
     }
+    if( e.key == 'p'){
+        handleSquarePress(circlePoint);
+    }
 }
 
 
@@ -435,4 +438,8 @@ function handleTriggerRelease(currentCirclePoint){
     events['rotate'].pressed = false;
     events['rotate'].initialPoint = [];
     circlePoint = [];
+}
+
+function handleSquarePress(currentCirclePoint){
+    thismodel.controller.togglePause();
 }
