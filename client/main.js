@@ -9,6 +9,7 @@ let events = {
 };
 let tsunamiView;
 let canvas2;
+let restartTimer;
 
 /*
 Weebsocketst
@@ -123,6 +124,24 @@ let lifeCycle = {
             return true;
         }
 
+    },
+
+    modelSimulationWillStart: (model, controller) => {
+        controller.paused = true;
+        
+        // para salir del lock de stepnumber = 0 y paused en primera iteración
+        model.discretization.stepNumber += 1;
+
+
+        model.displayPColor();
+
+        clearTimeout(restartTimer);
+
+        restartTimer = setTimeout(() =>{
+            controller.paused = false;
+        }, 1000);
+
+    
     }
 }
 
