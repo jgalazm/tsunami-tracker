@@ -15,17 +15,6 @@ Weebsocketst
 let connectToWebsocketServer = (url) => {
 
     var ws = new WebSocket(url);
-    let startMovingPoint = [];
-    let previousPoint = [];
-    let currentPoint = [];
-    let normalize = (point, reference) => {
-        let amplification = 1.0;
-        let result = [(point[0] - reference[0]) + window.innerWidth / 2,
-        (point[1] - reference[1]) + window.innerHeight / 2];
-        console.log(result);
-        return result;
-    }
-
     ws.onmessage = function (event) {
         let data = JSON.parse(event.data);
 
