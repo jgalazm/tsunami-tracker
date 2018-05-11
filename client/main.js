@@ -80,7 +80,8 @@ let data = {
 
 let output = {
     stopTime: 30 * 60 * 60,
-    displayOption: 'heights'
+    displayOption: 'heights',
+    loop: true
 };
 
 let niterations = 0;
@@ -311,6 +312,15 @@ window.onmouseup = (e) => {
     }
 };
 
+window.onkeypress = (e)=>{
+    if( e.key == 'a'){
+        handleSquarePress(circlePoint);
+    }
+    if( e.key == 's'){
+        handleCrossPress(circlePoint);
+    }
+}
+
 
 
 setTimeout(loadEarthquakeControl, 1000);
@@ -370,12 +380,12 @@ function handleTriggerPress(currentCirclePoint){
 
 function handleSquarePress(currentCirclePoint){
     let newMw = Math.min(12, thismodel.model.earthquake[0].Mw + 0.2);
-    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
+    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
 }
 
 function handleCrossPress(currentCirclePoint){
     let newMw = Math.max(7, thismodel.model.earthquake[0].Mw - 0.2);
-    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
+    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
 }
 
 function handleTriggerRelease(currentCirclePoint){

@@ -76,11 +76,18 @@
 
         let animate = () => {
 
-            /********************* */
             if(paused){
                 requestAnimationFrame(animate);
                 return;
             }
+
+
+            if(model.discretization.stepNumber == 0){
+                if(lifeCycle.modelSimulationWillStart)
+                    lifeCycle.modelSimulationWillStart(model, thisController);
+            }
+
+            /********************* */
             let exitLoop = true;
             while(exitLoop){
                 model.runSimulationStep();                
@@ -217,21 +224,6 @@
         }
         else if(data.earthquake){
             earthquake = data.earthquake;
-
-            // assign missing parameters
-            for(let i = 0; i<earthquake.length; i++){
-                earthquake[i].ce = earthquake[i].ce;
-
-                if( earthquake[i].Mw != undefined && 
-                    !(earthquake[i].L != undefined && 
-                        earthquake[i].W != undefined && 
-                        earthquake[i].slip != undefined ) ){
-                    const LWslip = getLengthWidthSlip(earthquake[i].Mw);
-                    earthquake[i].L = LWslip.L;
-                    earthquake[i].W = LWslip.W;
-                    earthquake[i].slip = LWslip.slip;
-                }
-            }
         }
                 
 
@@ -1601,6 +1593,25 @@
             
         };
 
+
+        let setEarthquake = ()=>{
+            if(earthquake){
+                for(let i = 0; i<earthquake.length; i++){
+                    earthquake[i].ce = earthquake[i].ce;
+        
+                    if( earthquake[i].Mw != undefined && 
+                        !(earthquake[i].L != undefined && 
+                            earthquake[i].W != undefined && 
+                            earthquake[i].slip != undefined ) ){
+                        const LWslip = getLengthWidthSlip(earthquake[i].Mw);
+                        earthquake[i].L = LWslip.L;
+                        earthquake[i].W = LWslip.W;
+                        earthquake[i].slip = LWslip.slip;
+                    }
+                }   
+            }
+
+        };
         let start = function(){
 
             bathymetry.texture = createTextureFromMatrix (
@@ -1618,10 +1629,13 @@
             createShaders();
 
             createBuffers();
+            
+            setEarthquake();
 
             initFBOs();
             
             setPOIs();
+
 
         };
 
@@ -1666,9 +1680,11 @@
                 console.log(gl);
                 wave.clearBuffers();
                 earthquake = newEarthquake;
+                setEarthquake();
                 renderEarthquake();
                 renderDisplayProgram();
                 discretization.stepNumber = 0;
+
             },
             earthquake
         }
