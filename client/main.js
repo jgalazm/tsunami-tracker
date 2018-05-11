@@ -27,6 +27,8 @@ let connectToWebsocketServer = (url) => {
                 handleTriggerPress([data.x, data.y]);
             if (data.button == "TRIANGLE")
                 handleTrianglePress([data.x, data.y]);
+            if (data.button == "CIRCLE")
+                handleTrianglePress([data.x, data.y]);
             if (data.button == "SQUARE")
                 handleSquarePress([data.x, data.y]);
             if (data.button == "CROSS")
@@ -38,6 +40,8 @@ let connectToWebsocketServer = (url) => {
             if (data.button == "TRIGGER")
                 handleTriggerRelease([data.x, data.y]);
             if (data.button == "TRIANGLE")
+                handleTriangleRelease([data.x, data.y]);
+            if (data.button == "CIRCLE")
                 handleTriangleRelease([data.x, data.y]);
             if (data.button == "SQUARE")
                 handleSquareRelease([data.x, data.y]);
@@ -306,7 +310,12 @@ let startEarthquakeFromUnitCircleCoordinates = (xycircle) => {
         var cartographic = ellipsoid.cartesianToCartographic(cartesian);
         var longitude = Cesium.Math.toDegrees(cartographic.longitude);
         var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+<<<<<<< HEAD
         thismodel.model.newEarthquake = [Object.assign(data.earthquake[0], { cn: latitude, ce: longitude, slip:undefined })];
+=======
+        addCesiumPin(latitude, longitude);    
+        thismodel.model.newEarthquake = [Object.assign(data.earthquake[0], { cn: latitude, ce: longitude })];
+>>>>>>> 95a33e3829b4cd9da875100ba57a4f7144122915
     }
 }
 /* 
@@ -365,6 +374,42 @@ function flyHome(){
         destination: Cesium.Cartesian3.fromDegrees(lng, lat, 20000000)
     });
 }
+let pin;
+function addCesiumPin(lat=-45,lon=-75.59777){
+    console.log('ADDPIN', lat, lon);
+    if(pin)
+        tsunamiView.viewer.entities.remove(pin);
+    var svgDataDeclare = "data:image/svg+xml,";
+    var svgCircle = '<circle cx="40" cy="40" r="20" stroke="black" stroke-width="10" fill="black" /> ';
+    var svgCircle2 = '<path stroke="red" stroke-width="10" fill="none" d="M24 24 58 58 M58 24 24 58" />';
+    var svgPrefix = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="80px" height="80px" xml:space="preserve">';
+    var svgSuffix = "</svg>";
+    var svgString = svgPrefix + svgCircle2 + svgSuffix;
+
+    // create the cesium entity
+    var svgEntityImage = svgDataDeclare + svgString;
+
+    pin = tsunamiView.viewer.entities.add({
+        position : Cesium.Cartesian3.fromDegrees(lon, lat,100000),
+        billboard : {
+            width: 51,
+            height: 51,
+            image : svgEntityImage,
+        }
+    });
+}
+
+function setMw(newMw){
+    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
+    mwNode = document.getElementById("mw");
+    mwNode.textContent = Math.round(newMw*10)/10;
+    mwNode.style.animation = "none";
+    setTimeout(function(){
+        mwNode.style.animation = "fade 1s ease-in";
+    }, 0);
+    // mwNode.classList.toggle("fadeClass");
+
+}
 
 /*Handlers*/
 function handleMove(currentCirclePoint){
@@ -409,12 +454,12 @@ function handleTriggerPress(currentCirclePoint){
 
 function handleTrianglePress(currentCirclePoint){
     let newMw = Math.min(12, thismodel.model.earthquake[0].Mw + 0.2);
-    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
+    setMw(newMw);
 }
 
 function handleCirclePress(currentCirclePoint){
     let newMw = Math.max(7, thismodel.model.earthquake[0].Mw - 0.2);
-    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
+    setMw(newMw);
 }
 
 function handleCrossPress(currentCirclePoint){
