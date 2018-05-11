@@ -26,12 +26,20 @@ let connectToWebsocketServer = (url) => {
                 handleTriggerPress([data.x, data.y]);
             if (data.button == "TRIANGLE")
                 handleTrianglePress([data.x, data.y]);
+            if (data.button == "SQUARE")
+                handleSquarePress([data.x, data.y]);
+            if (data.button == "CROSS")
+                handleCrossPress([data.x, data.y]);
         }
         if (data.event == "RELEASE") {
             if (data.button == "TRIGGER")
                 handleTriggerRelease([data.x, data.y]);
             if (data.button == "TRIANGLE")
                 handleTriangleRelease([data.x, data.y]);
+            if (data.button == "SQUARE")
+                handleSquarePress([data.x, data.y]);
+            if (data.button == "CROSS")
+                handleCrossPress([data.x, data.y]);
         }
     };
 }
@@ -359,6 +367,17 @@ function handleTriggerPress(currentCirclePoint){
         events['rotate'].initialPoint = circlePoint;
     }
 }
+
+function handleSquarePress(currentCirclePoint){
+    let newMw = Math.min(12, thismodel.model.earthquake[0].Mw + 0.2);
+    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
+}
+
+function handleCrossPress(currentCirclePoint){
+    let newMw = Math.max(7, thismodel.model.earthquake[0].Mw - 0.2);
+    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
+}
+
 function handleTriggerRelease(currentCirclePoint){
     if( arrowContainer ) {
         arrowContainer.style.display = 'none';
