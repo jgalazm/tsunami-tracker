@@ -306,7 +306,7 @@ let startEarthquakeFromUnitCircleCoordinates = (xycircle) => {
         var cartographic = ellipsoid.cartesianToCartographic(cartesian);
         var longitude = Cesium.Math.toDegrees(cartographic.longitude);
         var latitude = Cesium.Math.toDegrees(cartographic.latitude);
-        thismodel.model.newEarthquake = [Object.assign(data.earthquake[0], { cn: latitude, ce: longitude })];
+        thismodel.model.newEarthquake = [Object.assign(data.earthquake[0], { cn: latitude, ce: longitude, slip:undefined })];
     }
 }
 /* 
