@@ -30,6 +30,8 @@ let connectToWebsocketServer = (url) => {
                 handleSquarePress([data.x, data.y]);
             if (data.button == "CROSS")
                 handleCrossPress([data.x, data.y]);
+            if (data.button == "MOVE")
+                handleMovePress([data.x, data.y]);
         }
         if (data.event == "RELEASE") {
             if (data.button == "TRIGGER")
@@ -37,9 +39,11 @@ let connectToWebsocketServer = (url) => {
             if (data.button == "TRIANGLE")
                 handleTriangleRelease([data.x, data.y]);
             if (data.button == "SQUARE")
-                handleSquarePress([data.x, data.y]);
+                handleSquareRelease([data.x, data.y]);
             if (data.button == "CROSS")
-                handleCrossPress([data.x, data.y]);
+                handleCrossRelease([data.x, data.y]);
+            if (data.button == "MOVE")
+                handleMoveRelease([data.x, data.y]);
         }
     };
 }
@@ -322,7 +326,15 @@ setTimeout(() => {
     });
 }, 1500);
 
+function flyHome(){
+    let lat = thismodel.model.earthquake[0].cn;
+    let lng = thismodel.model.earthquake[0].ce;
+    tsunamiView.viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(lng, lat, 20000000)
+    });
+}
 
+/*Handlers*/
 function handleMove(currentCirclePoint){
     const radius = window.innerHeight/2.0;
     const xoffset = window.innerWidth/2.0;
@@ -376,6 +388,10 @@ function handleSquarePress(currentCirclePoint){
 function handleCrossPress(currentCirclePoint){
     let newMw = Math.max(7, thismodel.model.earthquake[0].Mw - 0.2);
     thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
+}
+
+function handleMovePress(currentCirclePoint){
+    flyHome();
 }
 
 function handleTriggerRelease(currentCirclePoint){
