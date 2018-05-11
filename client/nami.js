@@ -10,6 +10,8 @@
         
         let controllerSimulationDidFinish, modelStepDidFinish;
 
+        let paused = false;
+
         if( typeof lifeCycle !== 'undefined'){
             if( typeof lifeCycle.controllerSimulationDidFinish !== 'undefined'){
                 controllerSimulationDidFinish = lifeCycle.controllerSimulationDidFinish;
@@ -75,11 +77,15 @@
         let animate = () => {
 
             /********************* */
-            let loop = true;
-            while(loop){
+            if(paused){
+                requestAnimationFrame(animate);
+                return;
+            }
+            let exitLoop = true;
+            while(exitLoop){
                 model.runSimulationStep();                
                     
-                loop = modelStepDidFinish(model, thisController);
+                exitLoop = modelStepDidFinish(model, thisController);
             }
 
             model.displayPColor();
@@ -91,6 +97,12 @@
                 requestAnimationFrame(animate);
                 
             }
+            else if(data.loop){
+
+                model.newEarthquake = model.earthquake;
+                requestAnimationFrame(animate);
+
+            }
             else{
 
                 controllerSimulationDidFinish(model, thisController);
@@ -101,6 +113,12 @@
 
         thisController = {
             animate,
+            togglePause: ()=>{
+                paused = !paused;
+            },
+            get paused(){
+                return paused;
+            },
             downloadCurrentGridHeights: ()=> {
                 downloadGridArray(model.currentGridHeights,
                     model.discretization.stepNumber*model.discretization.dt);
@@ -151,6 +169,7 @@
         
         let displayOption = output.displayOption ? output.displayOption : 'heights';
 
+       
         // domain
         domain = {
             coordinates : data.coordinates,
@@ -1650,9 +1669,8 @@
                 renderEarthquake();
                 renderDisplayProgram();
                 discretization.stepNumber = 0;
-
-
-            }
+            },
+            earthquake
         }
 
     };
