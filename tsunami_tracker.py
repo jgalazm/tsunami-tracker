@@ -74,12 +74,14 @@ async def serve(websocket, path):
     CIRCLE_CHANGED = False
     CROSS_CHANGED = False
     SQUARE_CHANGED = False
+    MOVE_CHANGED = False
 
     TRIGGER_PRESSED = False
     TRIANGLE_PRESSED = False
     CIRCLE_PRESSED = False
     CROSS_PRESSED = False
     SQUARE_PRESSED = False
+    MOVE_PRESSED = False
     while True:
         time.sleep(0.1)
         # Get the latest input report from the controller
@@ -117,6 +119,14 @@ async def serve(websocket, path):
                     SQUARE_PRESSED = True
                 if released & psmove.Btn_SQUARE:
                     SQUARE_PRESSED = False
+            if pressed & psmove.Btn_MOVE or released & psmove.Btn_MOVE:
+                MOVE_CHANGED = True
+                if pressed & psmove.Btn_MOVE:
+                    MOVE_PRESSED = True
+                if released & psmove.Btn_MOVE:
+                    MOVE_PRESSED = False
+
+
             
         # Grab the latest image from the camera
         tracker.update_image()
@@ -124,12 +134,12 @@ async def serve(websocket, path):
         tracker.update()
         status = tracker.get_status(move)
 
-        tracker.annotate()
-        image = tracker.get_image()
-        pixels = psmove.cdata(image.data, image.size).encode("utf-8", errors="surrogateescape")
-        surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
-        display.blit(surface, (0, 0))
-        pygame.display.flip()
+        # tracker.annotate()
+        # image = tracker.get_image()
+        # pixels = psmove.cdata(image.data, image.size).encode("utf-8", errors="surrogateescape")
+        # surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
+        # display.blit(surface, (0, 0))
+        # pygame.display.flip()
 
         # Check button presses
         if status == psmove.Tracker_TRACKING:
@@ -187,6 +197,15 @@ async def serve(websocket, path):
                 print('Sent event ' + json.dumps(event))
                 await websocket.send(json.dumps(event))
                 CROSS_CHANGED = False
+            if MOVE_CHANGED:
+                if MOVE_PRESSED:
+                    event['event'] = 'PRESS'
+                else:
+                    event['event'] = 'RELEASE'
+                event['button'] = 'MOVE'
+                print('Sent event ' + json.dumps(event))
+                await websocket.send(json.dumps(event))
+                MOVE_CHANGED = False
                     
 
         # Check the tracking status        
