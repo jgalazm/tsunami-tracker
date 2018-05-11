@@ -26,6 +26,8 @@ let connectToWebsocketServer = (url) => {
                 handleTriggerPress([data.x, data.y]);
             if (data.button == "TRIANGLE")
                 handleTrianglePress([data.x, data.y]);
+            if (data.button == "CIRCLE")
+                handleTrianglePress([data.x, data.y]);
             if (data.button == "SQUARE")
                 handleSquarePress([data.x, data.y]);
             if (data.button == "CROSS")
@@ -37,6 +39,8 @@ let connectToWebsocketServer = (url) => {
             if (data.button == "TRIGGER")
                 handleTriggerRelease([data.x, data.y]);
             if (data.button == "TRIANGLE")
+                handleTriangleRelease([data.x, data.y]);
+            if (data.button == "CIRCLE")
                 handleTriangleRelease([data.x, data.y]);
             if (data.button == "SQUARE")
                 handleSquareRelease([data.x, data.y]);
