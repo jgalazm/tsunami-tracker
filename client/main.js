@@ -376,6 +376,18 @@ function addCesiumPin(lat=-45,lon=-75.59777){
     });
 }
 
+function setMw(newMw){
+    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
+    mwNode = document.getElementById("mw");
+    mwNode.textContent = Math.round(newMw*10)/10;
+    mwNode.style.animation = "none";
+    setTimeout(function(){
+        mwNode.style.animation = "fade 1s ease-in";
+    }, 0);
+    // mwNode.classList.toggle("fadeClass");
+
+}
+
 /*Handlers*/
 function handleMove(currentCirclePoint){
     const radius = window.innerHeight/2.0;
@@ -419,12 +431,12 @@ function handleTriggerPress(currentCirclePoint){
 
 function handleTrianglePress(currentCirclePoint){
     let newMw = Math.min(12, thismodel.model.earthquake[0].Mw + 0.2);
-    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
+    setMw(newMw);
 }
 
 function handleCirclePress(currentCirclePoint){
     let newMw = Math.max(7, thismodel.model.earthquake[0].Mw - 0.2);
-    thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw, slip:undefined })];
+    setMw(newMw);
 }
 
 function handleCrossPress(currentCirclePoint){
