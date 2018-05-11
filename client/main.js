@@ -4,10 +4,10 @@ var videoElement = document.getElementById('videoElement');
 let events = {
     'rotate':{
         pressed: false,
-        initialPoint: [0,0]
+        initialPoint: []
     }
 };
-
+let tsunamiView;
 
 
 /* 
@@ -70,7 +70,7 @@ let lifeCycle = {
         // videoLayer.rectangle.material = model.canvas;
 
         if(model.discretization.stepNumber % 1000==0){
-            console.log(model.currentTime/60/60, controller.stopTime/60/60);
+            // console.log(model.currentTime/60/60, controller.stopTime/60/60);
         }
         niterations = niterations + 1;
 
@@ -97,15 +97,16 @@ rotation functions
 */
 
 let unitCircleToWindowCoordinates = (xy) =>{
-    let x2 = xy[0]*window.innerHeight + window.innerHeight/2;
-    let y2 = xy[1]*window.innerHeight + window.innerHeight/2;
+    let radius = window.innerHeight/2;
+    let x2 = xy[0]*radius + window.innerWidth/2;
+    let y2 = xy[1]*radius + window.innerHeight/2;
     return [x2,y2];
 }
 
 let windowToUnitCircleCoordinates = (xy) => {
     let radiusInPixels = window.innerHeight/2;
-    let x2 = (xy[0]-radiusInPixels)/window.innerHeight;
-    let y2 = (xy[1]-radiusInPixels)/window.innerHeight;
+    let x2 = (xy[0]-window.innerWidth/2)/radiusInPixels;
+    let y2 = (xy[1]-window.innerHeight/2)/radiusInPixels;
     return [x2,y2];
 }
 
@@ -128,11 +129,14 @@ let rotateBetweenPoints = (startPixelCoordinates, endPixelCoordinates) => {
         start = Cesium.Ellipsoid.WGS84.cartesianToCartographic(start);
         end = Cesium.Ellipsoid.WGS84.cartesianToCartographic(end);
 
-        const latDifference  = end.latitude - start.latitude;
-        const lonDifference = end.longitude - start.longitude;
-        console.log(lonDifference);
+        let latDifference  = end.latitude - start.latitude;
+        let lonDifference = end.longitude - start.longitude;
+        console.log(latDifference, lonDifference);
 
-        tsunamiView.viewer.camera.rotateRight(-Cesium.Math.toRadians(lonDifference));
+
+        const speed = 0.05;
+        tsunamiView.viewer.camera.rotateRight(lonDifference*speed);
+        tsunamiView.viewer.camera.rotateUp(-latDifference*speed);
     }
 }
 
@@ -201,35 +205,30 @@ mouse events
 */
 
 let mousedown = false;
+let circlePoint;
 window.onmousemove = (e)=>{
     if( pointerContainer ) {
         pointerContainer.style.top = `${e.clientY}px`;
         pointerContainer.style.left = `${e.clientX}px`;
     }
 
-    let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
-    console.log(events.rotate.pressed, events.rotate.initialPoint, circlePoint);
-    if(events['rotate'].pressed && events['rotate'].initialPoint.length>0){
-        events['rotate'].initialPoint = circlePoint;
-        rotateUnitSphere( events['rotate'].initialPoint, circlePoint);
-    }
-    
-    
+    circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
 };
 
 window.onmousedown = (e) =>{
     if(e.button == 1){
         let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
-        startEarthquakeFromUnitCircleCoordinates(coords);
+        startEarthquakeFromUnitCircleCoordinates(circlePoint);
     }
     else if(e.button === 0) {
         
         events['rotate'].pressed = true;
+        circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
         
         if(events['rotate'].initialPoint.length == 0){
-            let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
             events['rotate'].initialPoint = circlePoint;
         }
+
     }
 };
 
@@ -237,10 +236,19 @@ window.onmouseup = (e) =>{
     if(e.button == 0){
         events['rotate'].pressed = false;
         events['rotate'].initialPoint = [];
+        circlePoint = [];
     }
-    alert(events['rotate'].initialPoint);
+    //alert(events['rotate'].initialPoint);
+    
 };
 
 
 
 setTimeout(loadEarthquakeControl, 1000);
+setTimeout(()=>{
+    tsunamiView.viewer.clock.onTick.addEventListener(()=>{
+        if( events['rotate'].pressed){
+            rotateUnitSphere( events['rotate'].initialPoint, circlePoint);
+        }
+    });
+}, 1500);
