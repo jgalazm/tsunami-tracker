@@ -29,15 +29,21 @@ let connectToWebsocketServer = (url) => {
     ws.onmessage = function (event) {
         let data = JSON.parse(event.data);
 
-        if (data.event == "START_MOVING") {
-            startMovingPoint = [data.x, data.y]
+        if (data.event == "MOVE") {
+            handleMove([data.x, data.y]);
         }
-
-        currentPoint = [data.x, data.y];
-
-        directionVector = [startMovingPoint[0] - currentPoint[0], startMovingPoint[1] - currentPoint[1]]
-        console.log('Idderoijcetion vetctor', directionVector);
-        rotateToDirection(directionVector);
+        // if (data.event == "PRESS") {
+        //     if (data.button == "TRIGGER")
+        //         handleTriggerPress(data.x, data.y);
+        //     if (data.button == "TRIANGLE")
+        //         handleTrianglePress(data.x, data.y);
+        // }
+        // if (data.event == "RELEASE") {
+        //     if (data.button == "TRIGGER")
+        //         handleTriggerRelease(data.x, data.y);
+        //     if (data.button == "TRIANGLE")
+        //         handleTriangleRelease(data.x, data.y);
+        // }
     };
 }
 
