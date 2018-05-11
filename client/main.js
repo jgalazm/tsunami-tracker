@@ -140,7 +140,16 @@ let rotateBetweenPoints = (startPixelCoordinates, endPixelCoordinates) => {
     }
 }
 
+let rotateToDirection = (startPixelCoordinates, endPixelCoordinates) => {
+    let xDifference = endPixelCoordinates[0] - startPixelCoordinates[0]; 
+    let yDifference = endPixelCoordinates[1] - startPixelCoordinates[1]; 
+    xDifference = Math.abs(xDifference) < 30 ? 0.0 : xDifference;
+    yDifference = Math.abs(yDifference) < 30 ? 0.0 : yDifference;
 
+    let rotationSpeed = 0.0005;
+    tsunamiView.viewer.camera.rotateRight(rotationSpeed*xDifference);
+    tsunamiView.viewer.camera.rotateUp(rotationSpeed*yDifference);
+}
 
 let rotateUnitSphere = (start, end) =>{
     /* 
@@ -151,7 +160,11 @@ let rotateUnitSphere = (start, end) =>{
 
     let startPixelCoordinates = unitCircleToWindowCoordinates(start);
     let endPixelCoordinates = unitCircleToWindowCoordinates(end);
-    rotateBetweenPoints(startPixelCoordinates, endPixelCoordinates);
+
+    /* this one fails at the periodic boundary where lon = 180 = -180 */
+    // rotateBetweenPoints(startPixelCoordinates, endPixelCoordinates);
+    
+    rotateToDirection(startPixelCoordinates, endPixelCoordinates);
 }
 
 
