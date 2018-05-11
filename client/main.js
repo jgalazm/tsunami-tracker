@@ -254,8 +254,7 @@ window.onmousemove = (e) => {
 
 window.onmousedown = (e) => {
     if (e.button == 1) {
-        let circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
-        startEarthquakeFromUnitCircleCoordinates(circlePoint);
+        handleTrianglePress(circlePoint);
     }
     else if (e.button === 0) {
 
@@ -304,5 +303,9 @@ function handleMove(currentCirclePoint){
     }
 
     circlePoint = currentCirclePoint;
-    console.log('move', currentCirclePoint[0], currentCirclePoint[1])
+}
+
+function handleTrianglePress(currentCirclePoint){
+    startEarthquakeFromUnitCircleCoordinates(circlePoint);
+
 }
