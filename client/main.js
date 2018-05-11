@@ -303,7 +303,7 @@ window.onmousemove = (e) => {
 
 window.onmousedown = (e) => {
     if (e.button == 1) {
-        handleTrianglePress(circlePoint);
+        handleCrossPress(circlePoint);
     }
     else if (e.button === 0) {
         handleTriggerPress(circlePoint);        
@@ -318,10 +318,10 @@ window.onmouseup = (e) => {
 
 window.onkeypress = (e)=>{
     if( e.key == 'a'){
-        handleSquarePress(circlePoint);
+        handleTrianglePress(circlePoint);
     }
     if( e.key == 's'){
-        handleCrossPress(circlePoint);
+        handleCirclePress(circlePoint);
     }
 }
 
