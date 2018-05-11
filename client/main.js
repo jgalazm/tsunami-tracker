@@ -356,11 +356,6 @@ function handleMove(currentCirclePoint){
     circlePoint = currentCirclePoint;
 }
 
-function handleTrianglePress(currentCirclePoint){
-    startEarthquakeFromUnitCircleCoordinates(circlePoint);
-
-}
-
 function handleTriggerPress(currentCirclePoint){
     events['rotate'].pressed = true;
     const radius = window.innerHeight/2.0;
@@ -380,14 +375,18 @@ function handleTriggerPress(currentCirclePoint){
     }
 }
 
-function handleSquarePress(currentCirclePoint){
+function handleTrianglePress(currentCirclePoint){
     let newMw = Math.min(12, thismodel.model.earthquake[0].Mw + 0.2);
     thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
 }
 
-function handleCrossPress(currentCirclePoint){
+function handleCirclePress(currentCirclePoint){
     let newMw = Math.max(7, thismodel.model.earthquake[0].Mw - 0.2);
     thismodel.model.newEarthquake = [Object.assign(thismodel.model.earthquake[0], { Mw: newMw })];
+}
+
+function handleCrossPress(currentCirclePoint){
+    startEarthquakeFromUnitCircleCoordinates(circlePoint);
 }
 
 function handleMovePress(currentCirclePoint){
