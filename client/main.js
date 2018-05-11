@@ -201,12 +201,13 @@ earthquake pointer functions
 */
 
 let pointerContainer;
+let arrowContainer;
 
 let loadEarthquakeControl = () => {
 
     thismodel = new NAMI.driver(data, output, lifeCycle);
 
-
+    //Circle
     let canvas = document.createElement('canvas');
     canvas.width = window.innerWidth * 0.01;
     canvas.height = canvas.width;
@@ -223,6 +224,24 @@ let loadEarthquakeControl = () => {
     ctx.arc(x, y - r, r, 0, 2 * Math.PI, false);
     ctx.fillStyle = '#ff5555';
     ctx.fill();
+
+    //Arrow
+    let canvas2 = document.createElement('canvas');
+    canvas2.width = window.innerWidth * 0.1;
+    canvas2.height = canvas2.width/10;
+    // canvas2.style = "position: absolute;"
+    arrowContainer = document.getElementById('arrow-container');
+    arrowContainer.appendChild(canvas2);
+    
+    ctx = canvas2.getContext("2d");
+    let x1 = 0;
+    let y1 = canvas2.height/2;
+    ctx.beginPath();
+    ctx.strokeStyle = 'red';
+    ctx.fillStyle = 'red';
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(canvas2.width,y1);
+    ctx.stroke();
 }
 
 let startEarthquakeFromUnitCircleCoordinates = (xycircle) => {
