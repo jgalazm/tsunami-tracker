@@ -253,12 +253,8 @@ mouse events
 let mousedown = false;
 let circlePoint;
 window.onmousemove = (e) => {
-    if (pointerContainer) {
-        pointerContainer.style.top = `${e.clientY}px`;
-        pointerContainer.style.left = `${e.clientX}px`;
-    }
-
     circlePoint = windowToUnitCircleCoordinates([e.clientX, e.clientY]);
+    handleMove(circlePoint);
 };
 
 window.onmousedown = (e) => {
@@ -298,3 +294,19 @@ setTimeout(() => {
         }
     });
 }, 1500);
+
+
+function handleMove(currentCirclePoint){
+    const radius = window.innerHeight/2.0;
+    const xoffset = window.innerWidth/2.0;
+    const yoffset = window.innerHeight/2.0;
+    const windowX = currentCirclePoint[0] * radius + xoffset;
+    const windowY = currentCirclePoint[1] * radius + yoffset;
+
+    if( pointerContainer ) {
+        pointerContainer.style.top = `${windowY}px`;
+        pointerContainer.style.left = `${windowX}px`;
+    }
+
+    circlePoint = currentCirclePoint;
+}
