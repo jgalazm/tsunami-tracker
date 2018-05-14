@@ -359,6 +359,10 @@ setTimeout(() => {
         if (events['rotate'].pressed) {
             rotateUnitSphere(events['rotate'].initialPoint, circlePoint);
         }
+
+        if(thismodel){
+            writeTimeStamp(thismodel.model.currentTime);
+        }
     });
 }, 1500);
 
@@ -476,4 +480,24 @@ function handleTriggerRelease(currentCirclePoint){
 
 function handleSquarePress(currentCirclePoint){
     thismodel.controller.togglePause();
+}
+
+
+/* clock */ 
+
+function writeTimeStamp(time) {
+    var timetext = "";
+
+    var hours = Math.floor(time / 60 / 60),
+      minutes = Math.floor((time - (hours * 60 * 60)) / 60),
+      seconds = Math.round(time - (hours * 60 * 60) - (minutes * 60));
+    var timetext = timetext.concat(hours + ':' +
+      ((minutes < 10) ? '0' + minutes : minutes) + ':' +
+      ((seconds < 10) ? '0' + seconds : seconds));
+    var hoursText = ((hours < 10) ? '0' + hours : hours)
+    var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
+
+    document.getElementById('popupTimer').innerHTML = `Tiempo transcurrido </br> 
+    <strong> ${timetext} </strong>`;
+    
 }
