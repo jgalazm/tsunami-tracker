@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  
+  <script src="nami.js"></script>
+  <script src="../node_modules/cesium-tsunamilab/Build/Cesium/Cesium.js"></script>
+  <script src="slabs.js"></script>
+
+  <style>
+    html,
+    body,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #mwContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-size: 30vh;
+      text-align: center;
+      display: table;
+    }
+    #mw {
+      display: table-cell;
+      vertical-align: middle;
+      animation-fill-mode: forwards;
+      animation-iteration-count: 1;
+      opacity: 0;
+    }
+    
+    #earthquake-container {
+      position:absolute;
+      transform: translate(-50%, -50%); 
+    }
+
+    #arrow-container {
+      position:absolute;
+      display: none;
+      /* transform: translate(-50%, -50%);  */
+    }
+
+    .fadeClass {
+      animation: fade 2s;      
+    }
+
+    @keyframes fade {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+  </style>
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <link rel="stylesheet" type="text/css" href="css/eigencities.css">  
+  <link rel="stylesheet" type="text/css" href="css/tsunami.css">
+
+  <style>
+    #popupTimer{
+        position: absolute;
+        left:35%;
+        top:80%;
+        color:white;
+        text-align:center;
+        background: #09283a;
+        opacity: 0.8  5;
+        border-radius:5%;
+        padding: 2%;
+        font-size: 1.5em;
+    }
+  </style>
+
+</head>
+
+<body>
+  <video id='videoElement' style='display:none'></video>
+  <div id="mwContainer"><span id="mw"></span></div>
+  <script src="main3js.js"> </script>
+  <canvas id="earthquake-control"></canvas>
+  <div id="earthquake-container"></div>
+  <div id="arrow-container"></div>
+
+  <div id="popupTimer">
+    Tiempo transcurrido </br> 
+  <strong> 00:00:00 </strong></div>
+
+</body>
+
+</html>
