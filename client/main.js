@@ -28,7 +28,7 @@ let connectToWebsocketServer = (url) => {
             if (data.button == "TRIANGLE")
                 handleTrianglePress([data.x, data.y]);
             if (data.button == "CIRCLE")
-                handleTrianglePress([data.x, data.y]);
+                handleCirclePress([data.x, data.y]);
             if (data.button == "SQUARE")
                 handleSquarePress([data.x, data.y]);
             if (data.button == "CROSS")
@@ -42,7 +42,7 @@ let connectToWebsocketServer = (url) => {
             if (data.button == "TRIANGLE")
                 handleTriangleRelease([data.x, data.y]);
             if (data.button == "CIRCLE")
-                handleTriangleRelease([data.x, data.y]);
+                handleCircleRelease([data.x, data.y]);
             if (data.button == "SQUARE")
                 handleSquareRelease([data.x, data.y]);
             if (data.button == "CROSS")
@@ -76,8 +76,8 @@ let data = {
         reference: 'center'
     }],
     coordinates: 'spherical',
-    waveWidth: parseInt(2159 / 2),
-    waveHeight: parseInt(960 / 2),
+    waveWidth: parseInt(2159*0.5 ),
+    waveHeight: parseInt(960*0.5 ),
     displayWidth: parseInt(2159),
     displayHeight: parseInt(960),
     xmin: -179.99166666666667,
@@ -242,7 +242,7 @@ earthquake pointer functions
 */
 
 let pointerContainer;
-let arrowContainer;
+var arrowContainer;
 let initialMovementPoint;
 
 let drawArrow = (canvas, length) => {
@@ -366,11 +366,15 @@ setTimeout(() => {
     });
 }, 1500);
 
+setTimeout(() => {
+    rotateUnitSphere([500,500], [500,500]);
+}, 100)
+
 function flyHome(){
     let lat = thismodel.model.earthquake[0].cn;
     let lng = thismodel.model.earthquake[0].ce;
     tsunamiView.viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(lng, lat, 20000000)
+        destination: Cesium.Cartesian3.fromDegrees(lng, lat, 10000000)
     });
 }
 let pin;
@@ -498,6 +502,7 @@ function writeTimeStamp(time) {
     var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
 
     document.getElementById('popupTimer').innerHTML = `Tiempo transcurrido </br> 
-    <strong> ${timetext} </strong>`;
+    <strong> ${timetext} </strong> </br>
+    <small> hh:mm:ss</small>`;
     
 }

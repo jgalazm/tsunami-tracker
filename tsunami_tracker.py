@@ -286,7 +286,7 @@ def pool_transform(point):
     y = point[1]-Y0
     a = abs(REF_POINTS[2][0] - X0)
     b = abs(REF_POINTS[1][0] - Y0)
-    return [x/a, y/b]
+    return [-x/a, y/b]
 
 start_calibration()
 start_server = websockets.serve(serve, '0.0.0.0', 8765)
