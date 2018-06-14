@@ -11,50 +11,6 @@ let tsunamiView;
 let canvas2;
 let restartTimer;
 
-/*
-Weebsocketst
-*/
-let connectToWebsocketServer = (url) => {
-
-    var ws = new WebSocket(url);
-    ws.onmessage = function (event) {
-        let data = JSON.parse(event.data);
-        if (data.event == "MOVE") {
-            handleMove([data.x, data.y]);
-        }
-        if (data.event == "PRESS") {
-            if (data.button == "TRIGGER")
-                handleTriggerPress([data.x, data.y]);
-            if (data.button == "TRIANGLE")
-                handleTrianglePress([data.x, data.y]);
-            if (data.button == "CIRCLE")
-                handleTrianglePress([data.x, data.y]);
-            if (data.button == "SQUARE")
-                handleSquarePress([data.x, data.y]);
-            if (data.button == "CROSS")
-                handleCrossPress([data.x, data.y]);
-            if (data.button == "MOVE")
-                handleMovePress([data.x, data.y]);
-        }
-        if (data.event == "RELEASE") {
-            if (data.button == "TRIGGER")
-                handleTriggerRelease([data.x, data.y]);
-            if (data.button == "TRIANGLE")
-                handleTriangleRelease([data.x, data.y]);
-            if (data.button == "CIRCLE")
-                handleTriangleRelease([data.x, data.y]);
-            if (data.button == "SQUARE")
-                handleSquareRelease([data.x, data.y]);
-            if (data.button == "CROSS")
-                handleCrossRelease([data.x, data.y]);
-            if (data.button == "MOVE")
-                handleMoveRelease([data.x, data.y]);
-        }
-    };
-}
-
-connectToWebsocketServer("ws://localhost:8765");
-
 /* 
 Model setup
 */
@@ -76,10 +32,10 @@ let data = {
         reference: 'center'
     }],
     coordinates: 'spherical',
-    waveWidth: parseInt(2159 / 2),
-    waveHeight: parseInt(960 / 2),
-    displayWidth: parseInt(2159),
-    displayHeight: parseInt(960),
+    waveWidth: parseInt(2159),
+    waveHeight: parseInt(960 ),
+    displayWidth: parseInt(2159*1.3),
+    displayHeight: parseInt(960*1.3),
     xmin: -179.99166666666667,
     xmax: 179.67499999999998,
     ymin: -79.991666666666646,
@@ -98,7 +54,7 @@ let niterations = 0;
 let lifeCycle = {
     dataWasLoaded: (model) => {
         var videoElement = document.getElementById('videoElement');
-        var stream = model.canvas.captureStream(15);
+        var stream = model.canvas.captureStream(30);
         videoElement.srcObject = stream;
         var options = { mimeType: 'video/webm' };
 
@@ -117,6 +73,7 @@ let lifeCycle = {
             // console.log(model.currentTime/60/60, controller.stopTime/60/60);
         }
         niterations = niterations + 1;
+
 
         if (niterations % 10 == 0) {
             niterations = 0;
@@ -152,28 +109,39 @@ let thismodel;
 /* 3js functoins */
 
 var camera, scene, renderer;
-var geometry, material, mesh;
-
+var earth = {};
+var simulation = {};
+var geometry, material, earthMesh, earthTexture;
+var earthTexture, simulationTexture;
+var controls;
 
 function init() {
 
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 	camera.position.z = 1;
 
-	scene = new THREE.Scene();
-
-	// geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-    geometry = new THREE.SphereGeometry( 0.2, 32, 32 );
+    scene = new THREE.Scene();
     
-    // material = new THREE.MeshNormalMaterial();
-    texture = new THREE.Texture(thismodel.model.canvas);
-    material = new THREE.MeshBasicMaterial({map:texture});
+    controls = new THREE.OrbitControls( camera );
+    camera.position.set( 0, 0, 1 );
+    controls.update();
 
+    earth.geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
+    // texture = new THREE.VideoTexture( videoElement );
+    earth.texture = new THREE.TextureLoader().load( "NE2_ps_flat.jpg" );
+    earth.material = new THREE.MeshBasicMaterial({color:0xffffff, map: earth.texture});
+    earth.mesh = new THREE.Mesh( earth.geometry, earth.material );
+    scene.add( earth.mesh );
 
-	// mesh = new THREE.Mesh( geometry, material );
-    mesh = new THREE.Mesh( geometry, material );
-	scene.add( mesh );
+    var ysouth = Math.PI/2 - data.ymin*Math.PI/180.0;
+	var ynorth = Math.PI/2 - data.ymax*Math.PI/180.0;
     
+
+    simulation.geometry = new THREE.SphereGeometry( 0.301, 32, 32,	0, Math.PI*2.0,	ynorth, ysouth-ynorth)
+    simulation.texture = new THREE.VideoTexture( videoElement );
+    simulation.material = new THREE.MeshBasicMaterial({color:0xffffff, map: simulation.texture, transparent: true});
+    simulation.mesh = new THREE.Mesh( simulation.geometry, simulation.material );
+    scene.add( simulation.mesh );    
 
 	renderer = new THREE.WebGLRenderer( { antialias: true, canvas:document.getElementById('3jscanvas') } );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -184,8 +152,12 @@ function animate() {
 
 	requestAnimationFrame( animate );
 
-	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.02;
+	// mesh.rotation.x += 0.01;
+    earth.mesh.rotation.y += 0.001;
+    simulation.mesh.rotation.y += 0.001;
+    simulation.mesh.material.map.needsUpdate = true;
+
+	controls.update();
 
 	renderer.render( scene, camera );
 

@@ -239,7 +239,7 @@
         pois = output.pois ? output.pois : {};
 
         let cmin = 0;
-        let cmax = 1;
+        let cmax = 0.5;
         colors = [[ 0.01568627,  0.11372549,  0.23137255,  0.       * (cmax-cmin) + cmin ],
         [ 0.03137255,  0.23137255,  0.4627451 ,  0.01     * (cmax-cmin) + cmin ],
         [ 0.09411765,  0.30196078,  0.61568627,  0.011    * (cmax-cmin) + cmin ],

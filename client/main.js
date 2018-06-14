@@ -98,7 +98,7 @@ let niterations = 0;
 let lifeCycle = {
     dataWasLoaded: (model) => {
         var videoElement = document.getElementById('videoElement');
-        var stream = model.canvas.captureStream(15);
+        var stream = model.canvas.captureStream(60);
         videoElement.srcObject = stream;
         var options = { mimeType: 'video/webm' };
 
