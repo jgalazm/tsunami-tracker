@@ -62,9 +62,38 @@
       to   { opacity: 0; }
     }
 
+    .simulation-info{
+      position: absolute;
+      color: white;
+      text-align: center;
+      background: #09283a;
+      opacity: 0.8 5;
+      border-radius: 5%;
+      padding: 0.3%;
+      font-size: 1.0em;
+      margin-left: auto;
+      margin-right: auto;
+    }
     #timer{
+      top: 7.2%;
+      left: -26.5%;
+      right: 0;
+      width: 5%;
+      transform:rotate(-30deg)
+    }
+
+    #magnitude{
+      top: 7.2%;
+      left: 26.5%;
+      right: 0;
+      width: 5%;
+      transform:rotate(30deg)
+    }
+
+    #magnitude-display{
       position: absolute;
       top: 1%;
+      left:20%;
       color: white;
       text-align: center;
       background: #09283a;
@@ -112,13 +141,17 @@
   <div id="earthquake-container"></div>
   <div id="arrow-container"></div>
 
-  <div id="timer">
-  <strong> 01 h. 02 min. </strong></div>
-
-  <div id="mask">
-    <img style="height:100%"src="mascara.png">
-
+  <div id="timer" class="simulation-info">
+  <strong> <small> 00 h 00 min </small> </strong>
   </div>
+
+  <div id="magnitude" class="simulation-info">
+      <strong> <small> 9.5 Mw </small> </strong>
+  </div>
+
+  <!-- <div id="mask">
+    <img style="height:100%"src="mascara.png">
+  </div> -->
 
 </body>
 

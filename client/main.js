@@ -410,6 +410,8 @@ function setMw(newMw){
     setTimeout(function(){
         mwNode.style.animation = "fade 1s ease-in";
     }, 0);
+
+    document.getElementById('magnitude').innerHTML = `<strong> <small> ${newMw.toFixed(1)} Mw </small> </strong>`
     // mwNode.classList.toggle("fadeClass");
 
 }
@@ -502,6 +504,6 @@ function writeTimeStamp(time) {
     var hoursText = ((hours < 10) ? '0' + hours : hours)
     var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
 
-    document.getElementById('timer').innerHTML = `<strong> ${hoursText} <small>h</small> ${minutesText} <small> min. </small> </strong>`;
+    document.getElementById('timer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
     
 }
