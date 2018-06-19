@@ -496,13 +496,12 @@ function writeTimeStamp(time) {
       minutes = Math.floor((time - (hours * 60 * 60)) / 60),
       seconds = Math.round(time - (hours * 60 * 60) - (minutes * 60));
     var timetext = timetext.concat(hours + ':' +
-      ((minutes < 10) ? '0' + minutes : minutes) + ':' +
-      ((seconds < 10) ? '0' + seconds : seconds));
+      ((minutes < 10) ? '0' + minutes : minutes))
+      //+ ':' //+
+      //((seconds < 10) ? '0' + seconds : seconds));
     var hoursText = ((hours < 10) ? '0' + hours : hours)
     var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
 
-    document.getElementById('popupTimer').innerHTML = `Tiempo transcurrido </br> 
-    <strong> ${timetext} </strong> </br>
-    <small> hh:mm:ss</small>`;
+    document.getElementById('timer').innerHTML = `<strong> ${hoursText} <small>h</small> ${minutesText} <small> min. </small> </strong>`;
     
 }

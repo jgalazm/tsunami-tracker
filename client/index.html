@@ -31,7 +31,8 @@
       overflow: hidden;
       font-size: 30vh;
       text-align: center;
-      display: table;
+      display: table; 
+      opacity:0.5;
     }
     #mw {
       display: table-cell;
@@ -61,15 +62,9 @@
       to   { opacity: 0; }
     }
 
-  </style>
-  <link rel="stylesheet" type="text/css" href="css/main.css">
-  <link rel="stylesheet" type="text/css" href="css/eigencities.css">  
-  <link rel="stylesheet" type="text/css" href="css/tsunami.css">
-
-  <style>
-    #popupTimer{
+    #timer{
       position: absolute;
-      top: 10%;
+      top: 1%;
       color: white;
       text-align: center;
       background: #09283a;
@@ -81,9 +76,29 @@
       right: 0;
       margin-left: auto;
       margin-right: auto;
-      width: 250px;
+      width: 10%;
     }
+    #mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-size: 30vh;
+      text-align: center;
+      display: table; 
+      /* background-image:url("mascara.png"); */
+      opacity:0.5;
+    }
+
   </style>
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <link rel="stylesheet" type="text/css" href="css/eigencities.css">  
+  <link rel="stylesheet" type="text/css" href="css/tsunami.css">
+
 
 </head>
 
@@ -97,9 +112,13 @@
   <div id="earthquake-container"></div>
   <div id="arrow-container"></div>
 
-  <div id="popupTimer">
-    Tiempo transcurrido </br> 
-  <strong> 00:00:00 </strong></div>
+  <div id="timer">
+  <strong> 01 h. 02 min. </strong></div>
+
+  <div id="mask">
+    <img style="height:100%"src="mascara.png">
+
+  </div>
 
 </body>
 
