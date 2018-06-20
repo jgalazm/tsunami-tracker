@@ -83,7 +83,7 @@ async def serve(websocket, path):
     SQUARE_PRESSED = False
     MOVE_PRESSED = False
     while True:
-        time.sleep(0.1)
+        time.sleep(0.01)
         # Get the latest input report from the controller
         while move.poll():
             pressed, released = move.get_button_events()
