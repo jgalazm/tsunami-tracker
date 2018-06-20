@@ -7,6 +7,7 @@
   
   <script src="nami.js"></script>
   <script src="../node_modules/cesium-tsunamilab/Build/Cesium/Cesium.js"></script>
+  <script src="../node_modules/three/build/three.min.js"></script>
   <script src="slabs.js"></script>
 
   <style>
@@ -14,11 +15,15 @@
     html,
     body,
     #cesiumContainer {
-      width: 100%;
+      width: 98%;
       height: 100%;
       margin: 0;
+      margin-left:1%;
       padding: 0;
       overflow: hidden;
+    }
+    body{
+      background-color:black;
     }
     #mwContainer {
       position: absolute;
@@ -70,24 +75,31 @@
       opacity: 0.8 5;
       border-radius: 5%;
       padding: 0.3%;
+      padding-top: 0.5%;
       font-size: 1.0em;
       margin-left: auto;
       margin-right: auto;
     }
     #timer{
-      top: 7.2%;
-      left: -26.5%;
+      top: 5.4%;
+      left: -30.5%;
       right: 0;
-      width: 5%;
+      width: 11%;
       transform:rotate(-30deg)
     }
 
     #magnitude{
-      top: 7.2%;
-      left: 26.5%;
+      top: 6.4%;
+      left: 40.5%;
       right: 0;
       width: 5%;
       transform:rotate(30deg)
+    }
+
+  #colorbar{
+      top: 0%;
+      left: 48%;
+      width: 10%;
     }
 
     #magnitude-display{
@@ -147,6 +159,10 @@
 
   <div id="magnitude" class="simulation-info">
       <strong> <small> 9.5 Mw </small> </strong>
+  </div>
+
+  <div id="colorbar" class="simulation-info">
+      <strong> <small> ---colorbar--- </small> </strong>
   </div>
 
   <!-- <div id="mask">
