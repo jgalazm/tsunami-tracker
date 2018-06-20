@@ -10,7 +10,7 @@ let events = {
 let tsunamiView;
 let canvas2;
 let restartTimer;
-
+let videoShouldBePlaying = false;
 /*
 Weebsocketst
 */
@@ -131,7 +131,7 @@ let lifeCycle = {
     },
 
     modelSimulationWillStart: (model, controller) => {
-        controller.paused = true;
+        controller.paused = false;
         
         // para salir del lock de stepnumber = 0 y paused en primera iteración
         model.discretization.stepNumber += 1;
@@ -141,9 +141,9 @@ let lifeCycle = {
 
         clearTimeout(restartTimer);
 
-        restartTimer = setTimeout(() =>{
-            controller.paused = false;
-        }, 1000);
+        // restartTimer = setTimeout(() =>{
+        //     controller.paused = false;
+        // }, 1000);
 
     
     }
@@ -485,7 +485,14 @@ function handleTriggerRelease(currentCirclePoint){
 }
 
 function handleSquarePress(currentCirclePoint){
-    thismodel.controller.togglePause();
+    // thismodel.controller.togglePause();
+    videoShouldBePlaying = !videoShouldBePlaying;
+    if(videoShouldBePlaying){
+        startVideo();
+    }
+    else{
+        stopVideo();
+    }
 }
 
 
@@ -504,16 +511,35 @@ function writeTimeStamp(time) {
     var hoursText = ((hours < 10) ? '0' + hours : hours)
     var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
 
-    // document.getElementById('t   imer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
+    // document.getElementById('timer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
     
 }
 
 
 function stopVideo(){
+    videoShouldBePlaying = false;
     var video = document.getElementById('myVideo');
     video.pause();
     video.currentTime = 0;
     video.style.opacity = '0';
 
+    thismodel.controller.paused = false;
     flyHome();
+    setTimeout(function(){
+        thismodel.model.newEarthquake = thismodel.model.earthquake
+    }, 1000);
 }
+
+
+function startVideo(){
+    var video = document.getElementById('myVideo');
+
+    video.style.opacity = '1';
+    video.currentTime = 0;
+    video.play();
+
+    thismodel.controller.pause = false;
+
+    setTimeout(stopVideo,150*1000)
+}
+
