@@ -76,8 +76,8 @@ let data = {
         reference: 'center'
     }],
     coordinates: 'spherical',
-    waveWidth: parseInt(2159*0.5 ),
-    waveHeight: parseInt(960*0.5 ),
+    waveWidth: parseInt(2159 ),
+    waveHeight: parseInt(960 ),
     displayWidth: parseInt(2159),
     displayHeight: parseInt(960),
     xmin: -179.99166666666667,
