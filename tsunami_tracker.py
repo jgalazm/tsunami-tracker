@@ -262,7 +262,7 @@ def start_calibration():
             print("START RERLELALSADSED")
             if status == psmove.Tracker_TRACKING:
                 x, y, radius = tracker.get_position(move)
-                REF_POINTS[i] = [x,y]
+                REF_POINTS[i] = [x,y] # left, down, right fron the user point of view
                 print('Point ' + str(i) + ' : ' + str([x,y]))
                 i += 1
                 START_RELEASED = False
@@ -293,3 +293,5 @@ start_server = websockets.serve(serve, '0.0.0.0', 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
+
+# sudo LD_LIBRARY_PATH=~/github/tsunami-tracker python3 tsunami_tracker.py
