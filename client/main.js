@@ -517,6 +517,7 @@ function writeTimeStamp(time) {
 }
 
 
+var videoStopTimeout;
 function stopVideo(){
     videoShouldBePlaying = false;
     var video = document.getElementById('myVideo');
@@ -526,6 +527,9 @@ function stopVideo(){
 
     thismodel.controller.paused = false;
     flyHome();
+    if(videoStopTimeout){
+        clearTimeout(videoStopTimeout);
+    }
     setTimeout(function(){
         thismodel.model.newEarthquake = thismodel.model.earthquake
     }, 1000);
@@ -539,8 +543,8 @@ function startVideo(){
     video.currentTime = 0;
     video.play();
 
-    thismodel.controller.pause = false;
+    thismodel.controller.paused = true;
 
-    setTimeout(stopVideo,150*1000)
+    videoStopTimeout = setTimeout(stopVideo,150*1000)
 }
 
