@@ -42,10 +42,10 @@ var TsunamiView = function (params) {
     //   length : 100000000000000.0,
     //   width : 10.0
     // }));
-    // viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
-    //   url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles',
-    //   requestWaterMask: true
-    // });
+    viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
+      url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles',
+      requestWaterMask: true
+    });
     viewer.scene.globe.depthTestAgainstTerrain = false;
     viewer.scene.skyBox.show = false;
     viewer.scene.screenSpaceCameraController.minimumZoomDistance = 1e3 * 10;
