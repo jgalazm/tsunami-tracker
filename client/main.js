@@ -504,6 +504,16 @@ function writeTimeStamp(time) {
     var hoursText = ((hours < 10) ? '0' + hours : hours)
     var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
 
-    document.getElementById('timer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
+    // document.getElementById('t   imer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
     
+}
+
+
+function stopVideo(){
+    var video = document.getElementById('myVideo');
+    video.pause();
+    video.currentTime = 0;
+    video.style.opacity = '0';
+
+    flyHome();
 }
