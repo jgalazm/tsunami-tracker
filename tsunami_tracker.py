@@ -257,6 +257,8 @@ def start_calibration():
         surface = pygame.image.frombuffer(pixels, (image.width, image.height), 'RGB')
         display.blit(surface, (0, 0))
         pygame.display.flip()
+        for event in pygame.event.get():
+            continue
         
         if START_RELEASED:
             print("START RERLELALSADSED")
