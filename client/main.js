@@ -101,7 +101,7 @@ let lifeCycle = {
         var stream = model.canvas.captureStream();
         videoElement.srcObject = stream;
         var options = { mimeType: 'video/webm' };
-
+        
         document.body.appendChild(model.canvas);
         tsunamiView = TsunamiView({
             containerID0: 'cesiumContainer',

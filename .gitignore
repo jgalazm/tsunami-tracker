@@ -2,3 +2,7 @@ node_modules
 .vscode
 __pycache__
 *.mp4
+py3env
+*.dylib
+*psmove*
+.DS_Store

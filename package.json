@@ -4,8 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "python2 -m SimpleHTTPServer"
+    "start": "npm run open",
+    "open": "concurrently \"http-server -a localhost -p 1234\" \"open http://localhost:1234/client\""
   },
   "keywords": [],
   "author": "",
@@ -18,9 +18,5 @@
   "devDependencies": {
     "concurrently": "^3.6.0",
     "http-server": "^0.11.1"
-  },
-  "scripts": {
-    "start": "npm run open",
-    "open": "concurrently \"http-server -a localhost -p 1234\" \"open http://localhost:1234/client\""
   }
 }
