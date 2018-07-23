@@ -7,15 +7,16 @@ Install the latest versions ofl:
 * brew
 
 Then run 
-´´´
+```
    sh osx-install.sh
-´´´
+```
 
 To run TsunamiLab, plug the joystick and camera and run:
-´´´
+```
    sh tsunamilab.sh
-´´´
-When the camera image shows up, unplug the joystick and press the PS button. 
+```
+
+When the camera image shows up unplug the joystick and press the PS button. 
 
 Then point to your left, up and right pressing start at each location, making sure the marker (purple ball) is visible to the camera.
 
