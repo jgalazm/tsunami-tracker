@@ -98,7 +98,7 @@ let niterations = 0;
 let lifeCycle = {
     dataWasLoaded: (model) => {
         var videoElement = document.getElementById('videoElement');
-        var stream = model.canvas.captureStream(60);
+        var stream = model.canvas.captureStream();
         videoElement.srcObject = stream;
         var options = { mimeType: 'video/webm' };
 
@@ -459,7 +459,7 @@ function handleTriggerPress(currentCirclePoint){
 }
 
 function handleTrianglePress(currentCirclePoint){
-    let newMw = Math.min(12, thismodel.model.earthquake[0].Mw + 0.2);
+    let newMw = Math.min(9.8, thismodel.model.earthquake[0].Mw + 0.2);
     setMw(newMw);
 }
 
@@ -512,7 +512,7 @@ function writeTimeStamp(time) {
     var hoursText = ((hours < 10) ? '0' + hours : hours)
     var minutesText = ((minutes < 10) ? '0' + minutes : minutes)
 
-    // document.getElementById('timer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
+    document.getElementById('timer').innerHTML = `<strong> <small> ${hoursText} h ${minutesText} min </small> </strong>`;
     
 }
 
