@@ -413,6 +413,7 @@ function setMw(newMw){
 
     document.getElementById('magnitude').innerHTML = `<strong> <small> ${newMw.toFixed(1)} Mw </small> </strong>`
     document.getElementById('magnitude').classList.toggle('highlight-magnitude', true)
+    videoElement.play();
     // mwNode.classList.toggle("fadeClass");
 
 }
