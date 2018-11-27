@@ -1,0 +1,3 @@
+[submodule "Nami"]
+	path = Nami
+	url = https://github.com/jgalazm/Nami
